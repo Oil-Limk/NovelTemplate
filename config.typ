@@ -1,11 +1,11 @@
 // Bookcover
-#let bookcover(title, author) = {
+#let ta-bookcover(title, author) = {
   set page(
-    fill: rgb("#201106"),
+    fill: rgb("#0a466c"),
   )
   set text(
     font: "New Computer Modern",
-    fill: rgb("#ecb500"),
+    fill: rgb("#ffffff"),
     size: 25pt,
   )
 
@@ -14,10 +14,15 @@
 }
 
 // Novel
-#let novel(title, author, dedication, chapters) = {
-  set page(paper: "us-letter", numbering: none)
+#let novel(title, author, dedication, chapters, cover:image) = {
+  set page(numbering: none)
 
-  bookcover(title, author)
+  if cover == none {
+    ta-bookcover(title, author)
+  } else {
+    set page(background: cover)
+    pagebreak()
+  }
 
   set par(justify: true, first-line-indent: (amount: 1.5em, all: true))
   set text(font: "New Computer Modern", size: 10pt)
@@ -27,17 +32,16 @@
     it
   }
 
+  show outline.entry: it => {
+    link(it.element.location(), it)
+  }
+
   outline(target: heading.where(level: 2))
 
   pagebreak(weak: true)
-  align(right + horizon,
-    for phrase in dedication {
-      emph(phrase)
-      linebreak()
-    }
-  )
+  align(right + horizon, emph(dedication.join([ \ ])))
 
-  set page(paper: "us-letter", numbering: "1")
+  set page(numbering: "1")
   counter(page).update(1)
 
   for (frch, toch) in chapters {
@@ -52,13 +56,7 @@
 #let chapter(title, verses, doc) = {
   align(center, heading(level: 2, title))
 
-  align(left, (emph(
-    for verse in verses {
-      linebreak()
-      verse
-    }
-  ),[...]).join())
-  linebreak()
+  align(right, emph(verses.join([ \ ])))
 
   doc
 }
