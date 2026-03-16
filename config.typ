@@ -14,7 +14,7 @@
 }
 
 // Novel
-#let novel(title, author, dedication, chapters, cover:image) = {
+#let novel(title, author, dedication, chapters, cover:none) = {
   set page(numbering: none)
 
   if cover == none {
